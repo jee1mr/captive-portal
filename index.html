@@ -1015,4 +1015,50 @@ body .markdown-body
   }
 }
 </style><title>README</title></head><body><article class="markdown-body"><h1 id="captive-portal"><a name="user-content-captive-portal" href="#captive-portal" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Captive Portal</h1>
-<p>^^Tutorial on how to build a captive portal^^</p></article></body></html>
+<p>Tutorial on how to build a captive portal (Raspberry Pi/Linux/Ubuntu/Raspian/Debian)</p>
+<p><b>What&rsquo;s a captive portal?</b></p>
+<blockquote>
+<p>It&rsquo;s that thing which pops up and asks you to login when you try to connect to internet via public WiFi spots (airport<br />
+/cafe/railway-station).</p>
+</blockquote>
+<p><img src="./android-captive-portal.png" alt="android-captive-portal.png" style="width: 300px;"/></p>
+<p><i>So, how to build it?</i></p>
+<p>If you read the Wikipedia <a href="https://en.wikipedia.org/wiki/Captive_portal" target="_blank">article</a> about captive portal, there are 3 ways to implement a captive portal:</p>
+<blockquote>
+<ol>
+<li>HTTP redirect</li>
+<li>ICMP redirect</li>
+<li>Redirect by DNS</li>
+</ol>
+</blockquote>
+<p>I&rsquo;ve tried 1 and 3. I personally found 3 more reliable.<br />
+There could be better ways of doing this. But this how I did it using the DNS redirect method. (or may be a mix of 1 and 3)</p>
+<p><b>Mechanism:</b></p>
+<p><img src="./network-diagram.png" alt="network-diagram.png" style="width: 800px;"/></p>
+<p><b>1. Firewall (Iptables):</b><br />
+This is where all the magic happens. The iptables rules must be carefully written so that the following things happen:</p>
+<ul>
+<li>DHCP server is open to all. Everybody gets an ip address.</li>
+<li>Every packet from authorized users are marked. (based on the mac address)<br />
+   Hence, marked packets are authorized users and unmarked ones are unauthorized users.</li>
+<li>DNS queries from unauthorized users are forwarded to local DNS server.<br />
+   DNS queries from authorized users are forwarded to google DNS server.</li>
+<li>http and https requests are allowed to pass through for authorized users.<br />
+   http requests from unauthorized users are forwarded to local http port which is redirected to captive portal.<br />
+   https requests from unauthorized users are blocked. (because local server won&rsquo;t be able to handle it well and throw certificate error. It&rsquo;s better to just block https)</li>
+</ul>
+<p><b>2. DHCP (isc-dhcp-server):</b><br />
+Give the local DNS address to anybody who requests for an ip address. Also, &ldquo;on commit&rdquo; hook can be used to create the user account with <i>mac_address</i> and <i>ip_address</i> info.</p>
+<p><b>3. DNS (bind):</b><br />
+DNS should be configured such that it shouldn&rsquo;t answer any queries other than the captive portal trigger urls of various vendors.</p>
+<pre><code>connectivitycheck.gstatic.com (chrome/google/android)
+detectportal.firefox.com (firefox)
+</code></pre>
+
+<p>There are few others but I&rsquo;m yet to verify them completely.</p>
+<pre><code>www.msftncsi.com (windows)
+captive.apple.com (apple)
+clients3.google.com (chrome)
+clients4.google.com (chrome)
+clients5.google.com (chrome)
+</code></pre></article></body></html>
