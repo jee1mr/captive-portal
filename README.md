@@ -12,10 +12,9 @@ Tutorial on how to build a captive portal (Raspberry Pi/Linux/Ubuntu/Raspian/Deb
 
 If you read the Wikipedia <a href="https://en.wikipedia.org/wiki/Captive_portal" target="_blank">article</a> about captive portal, there are 3 ways to implement a captive portal:
 
->1. HTTP redirect
-2. ICMP redirect
-3. Redirect by DNS
-
+1. <b>HTTP redirect</b>
+2. <b>ICMP redirect</b>
+3. <b>Redirect by DNS</b>
 
 I've tried 1 and 3. I personally found 3 more reliable.
 There could be better ways of doing this. But this how I did it using the DNS redirect method. (or may be a mix of 1 and 3)
